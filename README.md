@@ -57,3 +57,8 @@ removes command from commands list. Useful if you want to disable any command at
 
 ## Example
 * See the [SimpleExample](examples/SimpleExample/SimpleExample.ino) for more information.
+
+## Supported and Tested boards
+* UNO
+* MEGA 1280 and MEGA 2560
+* NODEMCU and ESP8266 series
