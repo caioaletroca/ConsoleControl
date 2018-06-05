@@ -19,7 +19,6 @@ class ConsoleControl
 		ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw);
 		
 		void loop(void);
-		void compile(String command);
 		void on(String command, CommandFunction function);
 		void remove(String command);
 		void log(String line);
@@ -32,6 +31,7 @@ class ConsoleControl
 		std::map<String, CommandFunction> _commands;
 		
 		//Methods
+		void compile(String command);
 		void login(String command, CommandArgs args);
 		void logout(String command);
 		void reset(String command);
