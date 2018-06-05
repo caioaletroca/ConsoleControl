@@ -2,7 +2,11 @@
 #define __CONSOLE_CONTROL__
 
 #include "Arduino.h"
-#include "StandardCplusplus.h"
+
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+	#include "StandardCplusplus.h"
+#endif
+
 #include "map"
 #include "vector"
 
