@@ -2,7 +2,7 @@
 
 ## Installation
 
-### If you are using boards Arduino Uno or Arduino Mega series, you must install first the [Stardard C++ Arduino](https://github.com/maniacbug/StandardCplusplus) to use this library!!!
+### If you are using boards Arduino Nano, Uno or Mega series, you must install first the [Stardard C++ Arduino](https://github.com/maniacbug/StandardCplusplus) to use this library!!!
 
 Just download both libraries with "download as zip" from GitHub and install on Arduino IDE.
 
@@ -59,6 +59,7 @@ removes command from commands list. Useful if you want to disable any command at
 * See the [SimpleExample](examples/SimpleExample/SimpleExample.ino) for more information.
 
 ## Supported and Tested boards
+* NANO
 * UNO
 * MEGA 1280 and MEGA 2560
 * NODEMCU and ESP8266 series
