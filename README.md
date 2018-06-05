@@ -2,7 +2,7 @@
 
 ## Installation
 
-### You must install first the [Stardard C++ Arduino](https://github.com/maniacbug/StandardCplusplus) to use this library!!!
+### If you are using boards Arduino Uno or Arduino Mega series, you must install first the [Stardard C++ Arduino](https://github.com/maniacbug/StandardCplusplus) to use this library!!!
 
 Just download both libraries with "download as zip" from GitHub and install on Arduino IDE.
 
