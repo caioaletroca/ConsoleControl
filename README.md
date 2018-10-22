@@ -9,7 +9,9 @@ Just download both libraries with "download as zip" from GitHub and install on A
 ## Quick Usage
 To quick usage ConsoleControl you must install Stardard C++ Arduino, initialize the console with a user's password, register the required commands and call *ConsoleControl::loop* function in arduino's loop as the example above. You may use inline C++ functions as you wish:
 ```c
-ConsoleControl console(Serial, 9600, "password")
+#include <ConsoleControl.h>
+
+ConsoleControl console(Serial, 9600, "password");
 
 void setup() {
 	Serial.begin(9600);
