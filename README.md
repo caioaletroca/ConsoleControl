@@ -2,7 +2,7 @@
 
 ## Installation
 
-### If you are using boards Arduino Nano, Uno or Mega series, you must install first the [Stardard C++ Arduino](https://github.com/maniacbug/StandardCplusplus) to use this library!!!
+### If you are using boards Arduino Nano, Uno or Mega series, you must install first the [Arduino STL](https://github.com/mike-matera/ArduinoSTL) to use this library to support C++11!!!
 
 Just download both libraries with "download as zip" from GitHub and install on Arduino IDE.
 
