@@ -6,6 +6,9 @@ ConsoleControl::ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw) : s
 	this->password = pw;
 }
 
+/**
+ * The main console control loop
+ */
 void ConsoleControl::loop(void) {
 	if(this->serial->available()) {
 		String command = this->serial->readString();
@@ -15,6 +18,10 @@ void ConsoleControl::loop(void) {
 	}
 }
 
+/**
+ * Compile and run a single command
+ * @param command The command as a string
+ */
 void ConsoleControl::compile(String command) {
 	String cmd = command.substring(0, command.indexOf(" "));
 	CommandArgs args = this->explode(command);
@@ -41,10 +48,19 @@ void ConsoleControl::compile(String command) {
 	}
 }
 
+/**
+ * Registers a new command to the console
+ * @param command  The command string
+ * @param function The action to execute for that command
+ */
 void ConsoleControl::on(String command, CommandFunction function) {
 	_commands[command] = function;
 }
 
+/**
+ * Removes a command from the console
+ * @param command The command as string
+ */
 void ConsoleControl::remove(String command) {
 	auto e = _commands.find(command);
 
@@ -59,7 +75,11 @@ void ConsoleControl::log(String line) {
 	this->serial->println(String("[INFO] ") + line);
 }
 
-//Internal Commands
+/**
+ * The login action methods
+ * @param cmd  The command
+ * @param args The arguments
+ */
 void ConsoleControl::login(String cmd, CommandArgs args) {
 	if(args.size() > 1) {
 		if(args[1] == this->password) {
@@ -67,10 +87,14 @@ void ConsoleControl::login(String cmd, CommandArgs args) {
 			this->authorized = true;
 		}
 		else
-			this->serial->println("[ERROR] Failed...");
+			this->serial->println("[ERROR] Authentication failed...");
 	}
 }
 
+/**
+ * The logout action method
+ * @param cmd The command
+ */
 void ConsoleControl::logout(String cmd) {
 	if(this->authorized) {
 		Serial.println("[INFO] You logout successful");
@@ -86,17 +110,72 @@ void ConsoleControl::reset(String cmd) {
 	}
 }
 
+/**
+ * Explodes a string in different params
+ * @param  string The string to explode
+ * @return        [description]
+ */
 ConsoleControl::CommandArgs ConsoleControl::explode(String string) {
+	
+	// Usable variables
+	int pos = 0;
+	int spacePos = 0;
+	int quotePos = 0;
+	String current = "";
 	CommandArgs exploded;
 
-	char *data = const_cast<char*>(string.c_str());
+	// Stop when not found any special chars
+	while(spacePos >= 0 || quotePos >= 0) {
 
-	char *buffer = strtok(data, " ");
-	while(buffer != 0)
-	{
-		exploded.push_back(String(buffer));
-		buffer = strtok(0, " ");
+		// Get the new chars positions
+		spacePos = string.indexOf(' ', pos);
+		quotePos = string.indexOf('\"', pos);
+
+		// Get quote message mode
+		if(quotePos >= 0 && (quotePos < spacePos || spacePos < 0)) {
+
+			// Get the second double quote on the string
+			int secondQuotePos = string.indexOf('\"', quotePos + 1);
+
+			// If not find the next quote, throw error
+			if(secondQuotePos < 0) {
+				Serial.println("[ERROR] Could not found the proper double quote, error on arguments formation.");
+				return exploded;
+			}
+
+			// Get the string
+			current = string.substring(quotePos + 1, secondQuotePos);
+
+			// Add to the array
+			exploded.push_back(current);
+
+			// Jump to the next position
+			pos = secondQuotePos + 2;
+
+		// Space mode
+		} else if(spacePos >= 0) {
+
+			// Get the string
+			current = string.substring(pos, spacePos);
+
+			// Add to the array
+			exploded.push_back(current);
+
+			// Jump to the next position
+			pos = spacePos + 1;
+		}
+
+		// Serial.println(spacePos);
+		// Serial.println(quotePos);
 	}
+
+	// Add the final of the string
+	if(pos < string.length())
+		exploded.push_back(string.substring(pos));
+
+	for(int i = 0; i < exploded.size(); i++) {
+      	log(exploded[i]);
+    }
 
 	return exploded;
 }
