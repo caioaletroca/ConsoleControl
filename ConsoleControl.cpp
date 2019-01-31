@@ -173,9 +173,5 @@ ConsoleControl::CommandArgs ConsoleControl::explode(String string) {
 	if(pos < string.length())
 		exploded.push_back(string.substring(pos));
 
-	for(int i = 0; i < exploded.size(); i++) {
-      	log(exploded[i]);
-    }
-
 	return exploded;
 }
