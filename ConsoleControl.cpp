@@ -1,9 +1,22 @@
 #include "ConsoleControl.h"
 
+/**
+ * Default constructor
+ */
 ConsoleControl::ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw) : serial(&hs) {
 	serial->begin(baud);
 	serial->setTimeout(1000);
 	this->password = pw;
+}
+
+/**
+ * Constructor with the silence mode option
+ */
+ConsoleControl::ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw, bool sm) : serial(&hs) {
+	serial->begin(baud);
+	serial->setTimeout(1000);
+	this->password = pw;
+	this->SilenceMode = sm;
 }
 
 /**
@@ -12,7 +25,8 @@ ConsoleControl::ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw) : s
 void ConsoleControl::loop(void) {
 	if(this->serial->available()) {
 		String command = this->serial->readString();
-		this->serial->println(String("[INFO] Command: ") + command);
+
+		log(String("[INFO] Command: ") + command);
 
 		this->compile(command);
 	}
@@ -30,7 +44,7 @@ void ConsoleControl::compile(String command) {
 		this->login(cmd, args);
 	else if(cmd.indexOf(LOGOUT_COMMAND) >= 0)
 		this->logout(cmd);
-	else if(cmd.indexOf("reset") >= 0)
+	else if(cmd.indexOf(RESET_COMMAND) >= 0)
 		this->reset(cmd);
 	else {
 		if(this->authorized) {
@@ -39,11 +53,11 @@ void ConsoleControl::compile(String command) {
 			if(e != _commands.end()) {
 				e->second(cmd, args);
 			} else {
-				Serial.println("[ERROR] Unknow command");
+				log("[ERROR] Unknow command");
 			}
 		}
 		else {
-			Serial.println("[ERROR] You have not developer rights");
+			log("[ERROR] You have not developer rights");
 		}
 	}
 }
@@ -67,12 +81,17 @@ void ConsoleControl::remove(String command) {
 	if(e != _commands.end()) {
 		_commands.erase(e);
 	} else {
-		Serial.println(String("[ERROR] Command ") + command + String(" can not be removed"));
+		log(String("[ERROR] Command ") + command + String(" can not be removed"));
 	}
 }
 
+/**
+ * Logs the data to the serial only if the silence mode is false
+ * @param line The line to print
+ */
 void ConsoleControl::log(String line) {
-	this->serial->println(String("[INFO] ") + line);
+	if(!this->SilenceMode)
+		this->serial->println(line);
 }
 
 /**
@@ -83,11 +102,19 @@ void ConsoleControl::log(String line) {
 void ConsoleControl::login(String cmd, CommandArgs args) {
 	if(args.size() > 1) {
 		if(args[1] == this->password) {
-			this->serial->println("[INFO] You have developer rights");
+			if(!this->SilenceMode) {
+				this->serial->println("[INFO] You have developer rights");
+			} else {
+				this->serial->println("true");
+			}
 			this->authorized = true;
+		} else {
+			if(!this->SilenceMode) {
+				this->serial->println("[ERROR] Authentication failed...");
+			} else {
+				this->serial->println("false");
+			}
 		}
-		else
-			this->serial->println("[ERROR] Authentication failed...");
 	}
 }
 
@@ -97,14 +124,16 @@ void ConsoleControl::login(String cmd, CommandArgs args) {
  */
 void ConsoleControl::logout(String cmd) {
 	if(this->authorized) {
-		Serial.println("[INFO] You logout successful");
+		log("[INFO] You logout successful");
+
 		this->authorized = false;
 	}
 }
 
 void ConsoleControl::reset(String cmd) {
 	if(this->authorized) {
-		Serial.println("[WARNING] Reseting...");
+		log("[WARNING] Reseting...");
+
 		void(*resetFunction)(void) = 0;
 		resetFunction();
 	}
@@ -139,7 +168,7 @@ ConsoleControl::CommandArgs ConsoleControl::explode(String string) {
 
 			// If not find the next quote, throw error
 			if(secondQuotePos < 0) {
-				Serial.println("[ERROR] Could not found the proper double quote, error on arguments formation.");
+				log("[ERROR] Could not found the proper double quote, error on arguments formation.");
 				return exploded;
 			}
 

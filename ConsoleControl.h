@@ -12,15 +12,19 @@
 
 #define LOGIN_COMMAND "login"
 #define LOGOUT_COMMAND "logout"
+#define RESET_COMMAND "reset"
 
 class ConsoleControl
 {
 	typedef void(*CommandFunction)(const String, std::vector<String>);
 
 	public:
+		bool SilenceMode;
+
 		typedef std::vector<String> CommandArgs;
 
 		ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw);
+		ConsoleControl(HardwareSerial &hs, uint32_t baud, String pw, bool sm);
 		
 		void loop(void);
 		void on(String command, CommandFunction function);
