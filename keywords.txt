@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For ConsoleControl
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ConsoleControl	KEYWORD1
+CommandFunction	KEYWORD1
+CommandArgs	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+loop	KEYWORD2
+on	KEYWORD2
+remove	KEYWORD2
+log	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+#	LITERAL1
